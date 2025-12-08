@@ -101,6 +101,7 @@ class AdvertHelper:
                 "rssi": rssi,
                 "snr": snr,
                 "is_new_neighbor": is_new_neighbor,
+                "zero_hop": route_type in [0x02, 0x03],  # True for direct routes (no intermediate hops)
             }
             
             # Store to database
