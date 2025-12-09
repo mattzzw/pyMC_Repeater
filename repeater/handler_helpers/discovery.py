@@ -7,8 +7,6 @@ allowing other nodes to discover repeaters on the mesh network.
 
 import asyncio
 import logging
-from typing import Optional, Callable, Any
-
 from pymc_core.node.handlers.control import ControlHandler
 
 logger = logging.getLogger("DiscoveryHelper")
