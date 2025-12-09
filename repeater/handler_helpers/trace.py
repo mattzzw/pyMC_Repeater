@@ -215,7 +215,7 @@ class TraceHelper:
         """
         # Update the packet record to show it will be transmitted
         if self.repeater_handler and hasattr(self.repeater_handler, 'recent_packets'):
-            packet_hash = packet.calculate_packet_hash().hex()[:16]
+            packet_hash = packet.calculate_packet_hash().hex().upper()[:16]
             for record in reversed(self.repeater_handler.recent_packets):
                 if record.get("packet_hash") == packet_hash:
                     record["transmitted"] = True
