@@ -293,7 +293,10 @@ def main():
     config_path = args.config if args.config else '/etc/pymc_repeater/config.yaml'
 
     if args.log_level:
+        if "logging" not in config:
+            config["logging"] = {}
         config["logging"]["level"] = args.log_level
+
 
     # Don't initialize radio here - it will be done inside the async event loop
     daemon = RepeaterDaemon(config, radio=None)
