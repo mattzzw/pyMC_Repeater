@@ -10,6 +10,7 @@ import logging
 import time
 from typing import Dict, Any
 
+from pymc_core.hardware.signal_utils import snr_register_to_db
 from pymc_core.node.handlers.trace import TraceHandler
 from pymc_core.protocol.constants import MAX_PATH_SIZE, ROUTE_TYPE_DIRECT
 
@@ -115,9 +116,7 @@ class TraceHelper:
         for i in range(packet.path_len):
             if i < len(packet.path):
                 snr_val = packet.path[i]
-                # Convert unsigned byte to signed SNR
-                snr_signed = snr_val if snr_val < 128 else snr_val - 256
-                snr_db = snr_signed / 4.0
+                snr_db = snr_register_to_db(snr_val)
                 path_snrs.append(f"{snr_val}({snr_db:.1f}dB)")
 
                 # Add detailed SNR info if we have the corresponding hash
@@ -177,8 +176,7 @@ class TraceHelper:
         for i in range(packet.path_len):
             if i < len(packet.path):
                 snr_val = packet.path[i]
-                snr_signed = snr_val if snr_val < 128 else snr_val - 256
-                snr_db = snr_signed / 4.0
+                snr_db = snr_register_to_db(snr_val)
                 path_snrs.append(f"{snr_val}({snr_db:.1f}dB)")
 
             if i < len(trace_path):
