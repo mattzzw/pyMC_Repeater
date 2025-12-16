@@ -188,3 +188,8 @@ web:
   # Enable Cross-Origin Resource Sharing (CORS) headers
   # Allows web frontends from different origins to access the API
   cors_enabled: false
+
+  # Custom path to web frontend files (optional)
+  # If not specified, uses the default built-in path
+  # Example: /opt/custom-web-ui or /home/user/my-frontend
+  # web_path: null

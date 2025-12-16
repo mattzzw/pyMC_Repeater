@@ -63,7 +63,9 @@ class StatsApp:
         self.config = config or {}
         
         # Path to the compiled Vue.js application
-        self.html_dir = os.path.join(os.path.dirname(__file__), "html")
+        # Use web_path from config if provided, otherwise use default
+        default_html_dir = os.path.join(os.path.dirname(__file__), "html")
+        self.html_dir = self.config.get("web", {}).get("web_path", default_html_dir)
 
         # Create nested API object for routing
         self.api = APIEndpoints(stats_getter, send_advert_func, self.config, event_loop, daemon_instance, config_path)
@@ -135,19 +137,24 @@ class HTTPStatsServer:
             if self._cors_enabled:
                 self._setup_server_cors()
             
-            # Serve static files from the html directory (compiled Vue.js app)
-            html_dir = os.path.join(os.path.dirname(__file__), "html")
+
+            default_html_dir = os.path.join(os.path.dirname(__file__), "html")
+            html_dir = self.config.get("web", {}).get("web_path", default_html_dir)
+            
             assets_dir = os.path.join(html_dir, "assets")
+            next_dir = os.path.join(html_dir, "_next")
 
             # Build config with conditional CORS settings
             config = {
                 "/": {
                     "tools.sessions.on": False,
-                    # Ensure proper content types for Vue.js files
+                    # Ensure proper content types for static files
                     "tools.staticfile.content_types": {
                         'js': 'application/javascript',
                         'css': 'text/css',
-                        'html': 'text/html; charset=utf-8'
+                        'html': 'text/html; charset=utf-8',
+                        'svg': 'image/svg+xml',
+                        'txt': 'text/plain'
                     },
                 },
                 "/assets": {
@@ -165,11 +172,26 @@ class HTTPStatsServer:
                     "tools.staticfile.filename": os.path.join(html_dir, "favicon.ico"),
                 },
             }
+            
+            # Add Next.js support only if _next directory exists
+            if os.path.isdir(next_dir):
+                config["/_next"] = {
+                    "tools.staticdir.on": True,
+                    "tools.staticdir.dir": next_dir,
+                    # Set proper content types for Next.js assets
+                    "tools.staticdir.content_types": {
+                        'js': 'application/javascript',
+                        'css': 'text/css',
+                        'map': 'application/json'
+                    },
+                }
 
             # Only add CORS config entries if CORS is enabled
             if self._cors_enabled:
                 config["/"]["cors.expose.on"] = True
                 config["/assets"]["cors.expose.on"] = True
+                if "/_next" in config:
+                    config["/_next"]["cors.expose.on"] = True
                 config["/favicon.ico"]["cors.expose.on"] = True
 
             cherrypy.config.update(
