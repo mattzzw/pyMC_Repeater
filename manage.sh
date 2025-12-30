@@ -204,7 +204,7 @@ install_repeater() {
     
     echo "25"; echo "# Installing system dependencies..."
     apt-get update -qq
-    apt-get install -y libffi-dev jq pip python3-rrdtool wget swig build-essential python3-dev
+    apt-get install -y libffi-dev jq python3-pip python3-rrdtool wget swig build-essential python3-dev
     
     # Install mikefarah yq v4 if not already installed
     if ! command -v yq &> /dev/null || [[ "$(yq --version 2>&1)" != *"mikefarah/yq"* ]]; then
@@ -261,7 +261,7 @@ install_repeater() {
     SCRIPT_DIR="$(dirname "$0")"
     cd "$SCRIPT_DIR"
     
-    if pip install --break-system-packages --force-reinstall --no-cache-dir --ignore-installed .; then
+    if python3 -m pip install --break-system-packages --force-reinstall --no-cache-dir --ignore-installed .; then
         echo ""
         echo "✓ Python package installation completed successfully!"
         
@@ -340,7 +340,7 @@ upgrade_repeater() {
         echo "[3/9] Updating system dependencies..."
         apt-get update -qq
 
-        apt-get install -y libffi-dev jq pip python3-rrdtool wget swig build-essential python3-dev
+        apt-get install -y libffi-dev jq python3-pip python3-rrdtool wget swig build-essential python3-dev
         
         # Install mikefarah yq v4 if not already installed
         if ! command -v yq &> /dev/null || [[ "$(yq --version 2>&1)" != *"mikefarah/yq"* ]]; then
@@ -392,7 +392,7 @@ upgrade_repeater() {
         SCRIPT_DIR="$(dirname "$0")"
         cd "$SCRIPT_DIR"
         
-        if pip install --break-system-packages --force-reinstall --no-cache-dir --ignore-installed .; then
+        if python3 -m pip install --break-system-packages --force-reinstall --no-cache-dir --ignore-installed .; then
             echo ""
             echo "✓ Python package update completed successfully!"
         else
